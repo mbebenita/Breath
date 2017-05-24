@@ -1,75 +1,86 @@
 import * as React from "react";
 
+enum StopwatchState {
+  /**
+   * No timing has started.
+   */
+  NONE,
+  /**
+   * First timer.
+   */
+  TIME0,
+  /**
+   * Second timer.
+   */
+  TIME1,
+  DONE
+}
+
+function toTime(ms) {
+  return (ms / 1000).toFixed(2);
+}
+
 export class Stopwatch extends React.Component<any, any> {
   constructor() {
     super();
     this.state = {
-      currentTime: 0,
-      startTime: 0,
-      timer: 0,
-      isDone: false
+      stopwatchState: StopwatchState.NONE,
+      startTime0: 0,
+      startTime1: 0,
+      endTime1: 0
     };
-  }
 
-  componentDidMount() {
-    
+    setInterval(() => {
+      this.forceUpdate();
+    });
   }
-
-  onStartOrPause() {
-    if (this.state.timer) {
-      clearInterval(this.state.timer);
+  onClick() {
+    if (this.state.stopwatchState == StopwatchState.NONE) {
       this.setState({
-        timer: 0
+        stopwatchState: StopwatchState.TIME0,
+        startTime0: performance.now()
       });
-      return;
-    }
-
-    var timer = setInterval(() => {
+    } else if (this.state.stopwatchState == StopwatchState.TIME0) {
       this.setState({
-        currentTime: performance.now()
+        stopwatchState: StopwatchState.TIME1,
+        startTime1: performance.now()
       });
-    }, 33);
-    
-    this.setState({
-      startTime: performance.now() - (this.state.currentTime - this.state.startTime),
-      timer
-    });
-  }
+    } else if (this.state.stopwatchState == StopwatchState.TIME1) {
+      this.setState({
+        stopwatchState: StopwatchState.DONE,
+        endTime1: performance.now()
+      });
 
-  onStop() {
-    clearInterval(this.state.timer);
-  }
-
-  onReset() {
-    clearInterval(this.state.timer);
-    this.setState({
-      currentTime: 0,
-      startTime: 0,
-      timer: 0
-    });
-  }
-
-  onDone() {
-    clearInterval(this.state.timer);
-    this.setState({
-      isDone: true
-    });
-
-    if (this.props.onDone) {
-      this.props.onDone();
+      if (this.props.onDone) {
+        this.props.onDone();
+      }
     }
   }
 
   render() {
-    let elapsedTime = ((this.state.currentTime - this.state.startTime) / 1000).toFixed(2);
-    if (this.state.isDone) {
-      return <div>Elapsed Time: { elapsedTime }</div>
+    if (this.state.stopwatchState == StopwatchState.NONE) {
+      return <div>
+        <button onClick={this.onClick.bind(this)}>{"Start"}</button>
+      </div>
+    } else if (this.state.stopwatchState == StopwatchState.TIME0) {
+      return <div>
+        <span>First Time: {toTime(performance.now() - this.state.startTime0)}</span>
+        <button onClick={this.onClick.bind(this)}>{"Done"}</button>
+      </div>
+    } else if (this.state.stopwatchState == StopwatchState.TIME1) {
+      return <div>
+        <span>
+          First Time: {toTime(this.state.startTime1 - this.state.startTime0)},
+          Second Time: {toTime(performance.now() - this.state.startTime1)}
+        </span>
+        <button onClick={this.onClick.bind(this)}>{"Done"}</button>
+      </div>
+    } else if (this.state.stopwatchState == StopwatchState.DONE) {
+      return <div>
+        <span>
+          First Time: {toTime(this.state.startTime1 - this.state.startTime0)},
+          Second Time: {toTime(this.state.endTime1 - this.state.startTime1)}</span>
+      </div>
     }
-    return <div>
-      Elapsed Time: { elapsedTime }
-      <button onClick={this.onStartOrPause.bind(this)}>{this.state.timer ? "Pause" : "Start"}</button>
-      <button onClick={this.onReset.bind(this)}>Reset</button>
-      <button onClick={this.onDone.bind(this)}>Done</button>
-    </div>
   }
 }

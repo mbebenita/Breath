@@ -13,8 +13,12 @@ export class Counter extends React.Component<any, any> {
         count: 0
       });
       e.preventDefault();
-
     } else {
+      if (this.state.count == 0) {
+        if (this.props.onStart) {
+          this.props.onStart();
+        }
+      }
       this.setState({
         count: this.state.count + 1
       });
@@ -29,9 +33,11 @@ export class Counter extends React.Component<any, any> {
       height: 100,
       fontSize: 50
     };
-    return <button style={buttonStyle} 
+    return <div style={{backgroundColor: "blue", padding: 16}}>
+      <button style={buttonStyle}
       onMouseDown={this.onCount.bind(this)}
       onContextMenu={this.onContextMenu.bind(this)}
       >{this.state.count}</button>
+    </div>
   }
 }
