@@ -8,10 +8,12 @@ enum SessionState {
   COMPLETE
 }
 
-export class Session extends React.Component<any, any> {
+export class Session extends React.Component<{
+  onDone: (json: any) => void
+}, any> {
   constructor() {
     super();
-    let reps = ["FOO"];
+    let reps = [{}];
     this.state = {
       reps,
       startTime: 0,
@@ -23,12 +25,13 @@ export class Session extends React.Component<any, any> {
       this.forceUpdate();
     });
   }
-  onDone() {
+  onRepDone(rep) {
     if (this.state.sessionState == SessionState.COMPLETE) {
       return;
     }
     let reps = this.state.reps;
-    reps.push("FOO");
+    reps[reps.length - 1] = rep;
+    reps.push({});
     this.setState({reps});
   }
   onClick() {
@@ -42,6 +45,15 @@ export class Session extends React.Component<any, any> {
         sessionState: SessionState.COMPLETE,
         endTime: performance.now()
       });
+      if (this.props.onDone) {
+        this.props.onDone([
+          {
+            date: new Date(),
+            time: performance.now() - this.state.startTime,
+            reps: this.state.reps
+          }
+        ]);
+      }
     }
   }
   render() {
@@ -53,14 +65,14 @@ export class Session extends React.Component<any, any> {
       return <div>
         Session is Over {toTime(this.state.endTime - this.state.startTime)}
         <div style={{backgroundColor: "red", padding: 16}}>
-          { this.state.reps.map((rep, i) => <Rep onDone={this.onDone.bind(this)} key={i}/>) }
+          { this.state.reps.map((rep, i) => <Rep onDone={this.onRepDone.bind(this)} key={i}/>) }
         </div>
       </div>
     }
     return <div>
       Session {toTime(performance.now() - this.state.startTime)}
       <div style={{backgroundColor: "red", padding: 16}}>
-        { this.state.reps.map((rep, i) => <Rep onDone={this.onDone.bind(this)} key={i}/>) }
+        { this.state.reps.map((rep, i) => <Rep onDone={this.onRepDone.bind(this)} key={i}/>) }
       </div>
       <button onClick={this.onClick.bind(this)}>{"End Session"}</button>
     </div>

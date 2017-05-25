@@ -3,25 +3,17 @@ import * as React from "react";
 export class Counter extends React.Component<any, any> {
   constructor() {
     super();
-    this.state = {
-      count: 0
-    };
   }
   onCount(e) {
     if (e.button == 2) {
-      this.setState({
-        count: 0
-      });
+      // this.setState({
+      //   count: 0
+      // });
       e.preventDefault();
     } else {
-      if (this.state.count == 0) {
-        if (this.props.onStart) {
-          this.props.onStart();
-        }
+      if (this.props.onCount) {
+        this.props.onCount();
       }
-      this.setState({
-        count: this.state.count + 1
-      });
     }
   }
   onContextMenu() {
@@ -37,7 +29,7 @@ export class Counter extends React.Component<any, any> {
       <button style={buttonStyle}
       onMouseDown={this.onCount.bind(this)}
       onContextMenu={this.onContextMenu.bind(this)}
-      >{this.state.count}</button>
+      >{this.props.count}</button>
     </div>
   }
 }

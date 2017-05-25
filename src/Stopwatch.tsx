@@ -49,7 +49,7 @@ export class Stopwatch extends React.Component<any, any> {
       });
 
       if (this.props.onDone) {
-        this.props.onDone();
+        this.props.onDone(this.state.startTime0, this.state.startTime1, performance.now());
       }
     }
   }
