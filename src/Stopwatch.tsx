@@ -1,4 +1,5 @@
 import * as React from "react";
+import { toTime } from "./util";
 
 enum StopwatchState {
   /**
@@ -14,10 +15,6 @@ enum StopwatchState {
    */
   TIME1,
   DONE
-}
-
-function toTime(ms) {
-  return (ms / 1000).toFixed(2);
 }
 
 export class Stopwatch extends React.Component<any, any> {
