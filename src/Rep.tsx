@@ -19,10 +19,14 @@ export class Rep extends React.Component<any, any> {
     }
   }
   onCount() {
+    if (this.state.count == 0) {
+      this.setState({
+        startTime: performance.now(),
+        repState: RepState.IN_PROGRESS
+      });
+    }
     this.setState({
-      count: this.state.count + 1,
-      startTime: performance.now(),
-      repState: RepState.IN_PROGRESS
+      count: this.state.count + 1
     });
   }
   onStopwatchDone(startTime0, startTime1, endTime1) {
