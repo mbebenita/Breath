@@ -38,9 +38,8 @@ export class Rep extends React.Component<any, any> {
     if (this.props.onDone) {
       this.props.onDone({
         time: performance.now() - this.state.startTime,
-        startTime0,
-        startTime1,
-        endTime1,
+        time0: startTime1 - startTime0,
+        time1: endTime1 - startTime1,
         count: this.state.count
       });
     }

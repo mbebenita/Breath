@@ -49,7 +49,7 @@ export function saveState(json: any, onDone: (uri: string) => void) {
     uri = uri.substring(uri.lastIndexOf("/") + 1);
     onDone(uri);
   });
-  xhr.open("POST", "//api.myjson.com/bins", true);
+  xhr.open("POST", "https://api.myjson.com/bins", true);
   xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
   xhr.send(JSON.stringify(json));
 }
